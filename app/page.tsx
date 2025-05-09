@@ -12,6 +12,18 @@ export default function Home() {
           height={38}
           priority
         />
+<div className="mt-8 space-y-4 text-center sm:text-left">
+  <a href="/idea-generator" className="block text-blue-600 hover:underline text-lg font-medium">
+    🧠 Content Idea Generator
+  </a>
+  <a href="/content-repurpose" className="block text-blue-600 hover:underline text-lg font-medium">
+    🔁 Content Repurposer
+  </a>
+  <a href="/brand-pitch" className="block text-blue-600 hover:underline text-lg font-medium">
+    📩 Brand Collab Pitch Generator
+  </a>
+</div>
+
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
             Get started by editing{" "}
