@@ -1,34 +1,52 @@
 'use client';
+
 import { useState } from 'react';
 
-export default function Page() {
-  const [name, setName] = useState('');
-  const [product, setProduct] = useState('');
+export default function BrandPitchPage() {
+  const [brandInfo, setBrandInfo] = useState('');
   const [pitch, setPitch] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const generatePitch = () => {
-    setPitch(`${name} is revolutionizing the way we ${product}. Join us in shaping the future.`);
+  const generatePitch = async () => {
+    setLoading(true);
+    setPitch('');
+
+    const res = await fetch('/api/pitch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brandInfo }),
+    });
+
+    const data = await res.json();
+    setPitch(data.pitch);
+    setLoading(false);
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-2">Brand Pitch Generator</h1>
-      <input
-        className="block mb-2 p-2 border rounded w-full"
-        placeholder="Your brand name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Brand Pitch Generator</h1>
+      <textarea
+        rows={4}
+        value={brandInfo}
+        onChange={(e) => setBrandInfo(e.target.value)}
+        placeholder="Describe your brand or product..."
+        className="w-full p-2 border border-gray-300 rounded mb-4"
       />
-      <input
-        className="block mb-2 p-2 border rounded w-full"
-        placeholder="What does your product do?"
-        value={product}
-        onChange={(e) => setProduct(e.target.value)}
-      />
-      <button onClick={generatePitch} className="px-4 py-2 bg-purple-600 text-white rounded">
-        Generate Pitch
+      <button
+        onClick={generatePitch}
+        className="bg-purple-600 text-white px-4 py-2 rounded"
+        disabled={loading}
+      >
+        {loading ? 'Generating Pitch...' : 'Generate Pitch'}
       </button>
-      {pitch && <p className="mt-4">{pitch}</p>}
+
+      {pitch && (
+        <div className="mt-4 p-4 bg-gray-100 rounded border">
+          <strong>Pitch:</strong>
+          <p>{pitch}</p>
+        </div>
+      )}
     </div>
   );
 }
+
