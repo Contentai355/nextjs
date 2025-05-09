@@ -1,28 +1,51 @@
 'use client';
+
 import { useState } from 'react';
 
-const ideas = [
-  'Build a meditation app for freelancers',
-  'Create a newsletter for Gen Z finance tips',
-  'Design a gamified habit tracker for students',
-  'Launch a meal plan generator for busy parents',
-];
-
-export default function Page() {
+export default function IdeaGeneratorPage() {
+  const [prompt, setPrompt] = useState('');
   const [idea, setIdea] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const generateIdea = () => {
-    const randomIndex = Math.floor(Math.random() * ideas.length);
-    setIdea(ideas[randomIndex]);
+  const generateIdea = async () => {
+    setLoading(true);
+    setIdea('');
+
+    const res = await fetch('/api/idea', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await res.json();
+    setIdea(data.idea);
+    setLoading(false);
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-2">Idea Generator</h1>
-      <button onClick={generateIdea} className="px-4 py-2 bg-blue-600 text-white rounded">
-        Generate Idea
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">AI Idea Generator</h1>
+      <input
+        type="text"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Enter your topic"
+        className="w-full p-2 border border-gray-300 rounded mb-4"
+      />
+      <button
+        onClick={generateIdea}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+        disabled={loading}
+      >
+        {loading ? 'Generating...' : 'Generate Idea'}
       </button>
-      {idea && <p className="mt-4 text-lg">{idea}</p>}
+
+      {idea && (
+        <div className="mt-4 p-4 bg-gray-100 rounded border">
+          <strong>Generated Idea:</strong>
+          <p>{idea}</p>
+        </div>
+      )}
     </div>
   );
 }
